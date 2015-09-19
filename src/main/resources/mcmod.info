@@ -1,0 +1,16 @@
+[
+{
+  "modid": "Old Recipes",
+  "name": "Old Recipes",
+  "description": "Old some mods' recipes mod.",
+  "version": "1.0",
+  "mcversion": "1.7.10",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["nickey"],
+  "credits": "nickey",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]

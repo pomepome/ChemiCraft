@@ -1,0 +1,4 @@
+#English language file
+item.chemical_fluid.name=Chemical Fluid
+item.chemical_solid.name=Chemical Powder
+item.chemical_gas.name=Chemical Gas
