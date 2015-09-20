@@ -11,10 +11,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import pome.chemi.ChemiCraft;
-import pome.chemi.api.ChemicalsRegistry;
+import pome.chemi.ChemicalsRegistry;
 import pome.chemi.api.EnumChemicalType;
 
 public class ItemChemicals extends Item
@@ -34,6 +35,10 @@ public class ItemChemicals extends Item
 	private static String getName(ItemStack stack)
 	{
 		return ChemicalsRegistry.getName(stack.getItemDamage());
+	}
+	private static String getFormula(ItemStack stack)
+	{
+		return ChemicalsRegistry.getFormula(stack.getItemDamage());
 	}
 
 	public String getUnlocalizedName(ItemStack stack)
@@ -97,11 +102,16 @@ public class ItemChemicals extends Item
 		EnumChemicalType type = getType(stack);
 		switch(type)
 		{
-			case FLUID : typeString = "Fluid"; break;
-			case SOLID : typeString = "Solid"; break;
-			case GAS   : typeString = "Gas"; break;
+			case FLUID : typeString = EnumChatFormatting.AQUA + "Fluid"; break;
+			case SOLID : typeString = EnumChatFormatting.YELLOW + "Solid"; break;
+			case GAS   : typeString = EnumChatFormatting.GOLD + "Gas"; break;
 		}
 		list.add("Type: "+typeString);
-		list.add("Name: "+ getName(stack));
+		list.add("Formula: "+ getFormula(stack));
+	}
+	@Override
+	public String getItemStackDisplayName(ItemStack stack)
+	{
+		return getName(stack);
 	}
 }
