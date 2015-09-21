@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import pome.chemi.api.EnumRecipeType;
 import pome.chemi.api.IChemiRecipe;
+import pome.chemi.util.Util;
 
 public class RecipesRegistry
 {
@@ -14,6 +15,17 @@ public class RecipesRegistry
 	public static void registerRecipe(IChemiRecipe recipe)
 	{
 		listRecipes.add(recipe);
+	}
+	public static IChemiRecipe getRecipesFor(int id)
+	{
+		if(id >= listRecipes.size())
+		{
+			return null;
+		}
+		else
+		{
+			return listRecipes.get(id);
+		}
 	}
 	public static List<IChemiRecipe> getRecipesForType(EnumRecipeType type)
 	{
@@ -42,25 +54,12 @@ public class RecipesRegistry
 			{
 				ItemStack comp = stacks[i];
 				ItemStack source = sources[i];
-				if(comp == null && source == null)
-				{
-					continue;
-				}
-				if(comp == null || source == null)
-				{
-					flag = true;
-					continue;
-				}
-				if(comp.getItem() != source.getItem() || comp.getItemDamage() != source.getItemDamage())
+				if(!Util.areStacksEqual(source, comp))
 				{
 					flag = true;
 				}
 			}
-			if(flag)
-			{
-				continue;
-			}
-			else
+			if(!flag)
 			{
 				ret = recipe.getDest();
 				break;

@@ -1,5 +1,7 @@
 package pome.chemi.items;
 
+import static pome.chemi.api.ChemiCraftAPI.*;
+
 import java.util.List;
 
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -17,6 +19,8 @@ import net.minecraft.world.World;
 import pome.chemi.ChemiCraft;
 import pome.chemi.ChemicalsRegistry;
 import pome.chemi.api.EnumChemicalType;
+import pome.chemi.api.IChemiCraft;
+import pome.chemi.recipes.RecipesRegistry;
 
 public class ItemChemicals extends Item
 {
@@ -91,7 +95,16 @@ public class ItemChemicals extends Item
 	{
 		if(!world.isRemote)
 		{
-			player.addChatMessage(new ChatComponentText(ChemicalsRegistry.getName(stack.getItemDamage())));
+			IChemiCraft api = getAPI();
+			ItemStack dest = RecipesRegistry.getDestFromStacks(new ItemStack[]{ api.getChemicals(1), api.getChemicals(0)});
+			if(dest == null)
+			{
+				sendMessage(player,"none");
+			}
+			else
+			{
+				sendMessage(player,dest.getDisplayName());
+			}
 		}
 		return stack;
 	}
@@ -100,11 +113,14 @@ public class ItemChemicals extends Item
 	{
 		String typeString = "";
 		EnumChemicalType type = getType(stack);
-		switch(type)
+		if(type != null)
 		{
-			case FLUID : typeString = EnumChatFormatting.AQUA + "Fluid"; break;
-			case SOLID : typeString = EnumChatFormatting.YELLOW + "Solid"; break;
-			case GAS   : typeString = EnumChatFormatting.GOLD + "Gas"; break;
+			switch(type)
+			{
+				case FLUID : typeString = EnumChatFormatting.AQUA + "Fluid"; break;
+				case SOLID : typeString = EnumChatFormatting.YELLOW + "Solid"; break;
+				case GAS   : typeString = EnumChatFormatting.GOLD + "Gas"; break;
+			}
 		}
 		list.add("Type: "+typeString);
 		list.add("Formula: "+ getFormula(stack));
@@ -113,5 +129,9 @@ public class ItemChemicals extends Item
 	public String getItemStackDisplayName(ItemStack stack)
 	{
 		return getName(stack);
+	}
+	public static void sendMessage(EntityPlayer p, String message)
+	{
+		p.addChatMessage(new ChatComponentText(message));
 	}
 }

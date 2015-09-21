@@ -17,12 +17,13 @@ import pome.chemi.api.EnumChemicalType;
 import pome.chemi.api.IChemiCraft;
 import pome.chemi.api.IChemiRecipe;
 import pome.chemi.items.ItemChemicals;
+import pome.chemi.recipes.OxidizerRecipe;
 import pome.chemi.recipes.RecipesRegistry;
 
 @Mod(modid="ChemiCraft",name="ChemiCraft",version="test1")
 public class ChemiCraft implements IChemiCraft
 {
-	@Mod.Instance
+	@Mod.Instance("ChemiCraft")
 	public static ChemiCraft instance;
 
 	public static CreativeTabs TabChemical;
@@ -43,6 +44,7 @@ public class ChemiCraft implements IChemiCraft
 			ItemStack is = ChemiCraftAPI.getAPI().getChemicals(2);
 			addSRecipe(is,gs(Items.redstone));
 		}
+		registerRecipes();
 	}
 
 	public void registerChemicals()
@@ -55,6 +57,11 @@ public class ChemiCraft implements IChemiCraft
 		registerChemicals("Dilute sulfuric acid", "H2SO4", FLUID);
 		registerChemicals("Concentrated hydrochloric acid", "HCl", FLUID);
 		registerChemicals("Dilute hydrochloric acid", "HCl", FLUID);
+	}
+
+	public void registerRecipes()
+	{
+		registerChemicalRecipe(new OxidizerRecipe(getChemicals(1),getChemicals(0),getChemicals(2),false));
 	}
 
 	@Override

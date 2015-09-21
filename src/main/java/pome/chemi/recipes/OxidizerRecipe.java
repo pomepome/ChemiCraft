@@ -15,6 +15,7 @@ public class OxidizerRecipe implements IChemiRecipe
 		oxydized = toOxydize;
 		this.catalyst = catalyst;
 		this.needFire = needFire;
+		this.dest = destination;
 	}
 	@Override
 	public EnumRecipeType getRecipeType() {
@@ -29,7 +30,7 @@ public class OxidizerRecipe implements IChemiRecipe
 
 	@Override
 	public ItemStack getDest() {
-		return dest;
+		return dest.copy();
 	}
 
 	@Override
