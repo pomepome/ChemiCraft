@@ -1,0 +1,30 @@
+﻿#Japanese language file
+
+#Inventory names
+container.oxidizer=酸化器
+
+#Chemical names
+ch.vanadium_pentoxide=五酸化バナジウム
+ch.platinum=プラチナ
+ch.sulfur_dioxide=二酸化硫黄
+ch.sulfur_trioxide=三酸化硫黄
+ch.hydrogen_chloride=塩化水素
+ch.nitrogen_oxide=一酸化窒素
+ch.nitrogen_dioxide=二酸化窒素
+ch.concentrated_sulfuric_acid=濃硫酸
+ch.dilute_sulfuric_acid=希硫酸
+ch.concentrated_hydrochloric_acid=濃塩酸
+ch.dilute_hydrochloric_acid=希塩酸
+
+#Item names
+
+#Block names
+tile.oxidizer.name=酸化器
+
+#Chemical types
+ch.fluid=液体
+ch.solid=固体
+ch.gas=気体
+
+ch.type=三態
+ch.formula=化学式

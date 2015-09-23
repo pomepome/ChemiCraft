@@ -1,11 +1,13 @@
 package pome.chemi;
 
+import static pome.chemi.api.Constants.*;
 import static pome.chemi.api.EnumChemicalType.*;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -16,11 +18,14 @@ import pome.chemi.api.ChemiCraftAPI;
 import pome.chemi.api.EnumChemicalType;
 import pome.chemi.api.IChemiCraft;
 import pome.chemi.api.IChemiRecipe;
+import pome.chemi.blocks.BlockOxidizer;
+import pome.chemi.handlers.GuiHandler;
 import pome.chemi.items.ItemChemicals;
 import pome.chemi.recipes.OxidizerRecipe;
 import pome.chemi.recipes.RecipesRegistry;
+import pome.chemi.tiles.TileEntityOxidizer;
 
-@Mod(modid="ChemiCraft",name="ChemiCraft",version="test1")
+@Mod(modid="ChemiCraft",name="ChemiCraft",version="test3")
 public class ChemiCraft implements IChemiCraft
 {
 	@Mod.Instance("ChemiCraft")
@@ -28,7 +33,11 @@ public class ChemiCraft implements IChemiCraft
 
 	public static CreativeTabs TabChemical;
 
+	//Items
 	public static Item chemicals;
+
+	//Blocks
+	public static Block oxidizer;
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
@@ -40,19 +49,26 @@ public class ChemiCraft implements IChemiCraft
 	public void init(FMLInitializationEvent event)
 	{
 		chemicals = new ItemChemicals();
+
+		oxidizer = new BlockOxidizer();
 		{
 			ItemStack is = ChemiCraftAPI.getAPI().getChemicals(2);
 			addSRecipe(is,gs(Items.redstone));
 		}
 		registerRecipes();
+		NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+		GameRegistry.registerTileEntity(TileEntityOxidizer.class, "Oxidizer");
 	}
 
 	public void registerChemicals()
 	{
 		registerChemicals("Vanadium pentoxide", "V2O5", SOLID);
+		registerChemicals("Platinum", "Pt", SOLID);
 		registerChemicals("Sulfur dioxide", "SO2", GAS);
 		registerChemicals("Sulfur trioxide", "SO3",GAS);
 		registerChemicals("Hydrogen chloride", "HCl",GAS);
+		registerChemicals("Nitrogen oxide", "NO", GAS);
+		registerChemicals("Nitrogen dioxide", "NO2",GAS);
 		registerChemicals("Concentrated sulfuric acid", "H2SO4", FLUID);
 		registerChemicals("Dilute sulfuric acid", "H2SO4", FLUID);
 		registerChemicals("Concentrated hydrochloric acid", "HCl", FLUID);
@@ -61,7 +77,8 @@ public class ChemiCraft implements IChemiCraft
 
 	public void registerRecipes()
 	{
-		registerChemicalRecipe(new OxidizerRecipe(getChemicals(1),getChemicals(0),getChemicals(2),false));
+		registerChemicalRecipe(new OxidizerRecipe(getChemicals(SO2),getChemicals(V2O5),getChemicals(SO3),false));
+		registerChemicalRecipe(new OxidizerRecipe(getChemicals(NO),null,getChemicals(NO2),false));
 	}
 
 	@Override

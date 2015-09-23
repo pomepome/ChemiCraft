@@ -19,7 +19,7 @@ public class OxidizerRecipe implements IChemiRecipe
 	}
 	@Override
 	public EnumRecipeType getRecipeType() {
-		return EnumRecipeType.OXYDIZER;
+		return EnumRecipeType.OXIDIZER;
 	}
 
 	@Override

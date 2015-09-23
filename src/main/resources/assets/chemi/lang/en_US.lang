@@ -1,4 +1,30 @@
-#English language file
-item.chemical_fluid.name=Chemical Fluid
-item.chemical_solid.name=Chemical Powder
-item.chemical_gas.name=Chemical Gas
+﻿#English language file
+
+#Inventory names
+container.oxidizer=Oxidizer
+
+#Chemical names
+ch.vanadium_pentoxide=Vanadium Pentoxide
+ch.platinum=Plutinum
+ch.sulfur_dioxide=Sulfur Dioxide
+ch.sulfur_trioxide=Sulfur Trioxide
+ch.hydrogen_chloride=Hydrogen Chloride
+ch.nitrogen_oxide=Nitrogen Oxide
+ch.nitrogen_dioxide=Nitrogen Dioxide
+ch.concentrated_sulfuric_acid=Concentrated Sulfuric Acid
+ch.dilute_sulfuric_acid=Dilute Sulfuric Acid
+ch.concentrated_hydrochloric_acid=Concentrated Hydrochloric Acid
+ch.dilute_hydrochloric_acid=Dilute Hydrochloric Acid
+
+#Item names
+
+#Block names
+tile.oxidizer.name=Oxidizer
+
+#Chemical types
+ch.fluid=Fluid
+ch.solid=Solid
+ch.gas=Gas
+
+ch.type=Type
+ch.formula=Formula

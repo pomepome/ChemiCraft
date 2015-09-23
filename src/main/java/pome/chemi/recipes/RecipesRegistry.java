@@ -39,10 +39,10 @@ public class RecipesRegistry
 		}
 		return list;
 	}
-	public static ItemStack getDestFromStacks(ItemStack... stacks)
+	public static IChemiRecipe getRecipeFromStacks(EnumRecipeType type,ItemStack... stacks)
 	{
-		ItemStack ret = null;
-		for(IChemiRecipe recipe : listRecipes)
+		IChemiRecipe ret = null;
+		for(IChemiRecipe recipe : getRecipesForType(type))
 		{
 			ItemStack[] sources = recipe.getSources();
 			boolean flag = false;
@@ -61,10 +61,15 @@ public class RecipesRegistry
 			}
 			if(!flag)
 			{
-				ret = recipe.getDest();
+				ret = recipe;
 				break;
 			}
 		}
 		return ret;
+	}
+	public static ItemStack getDestFromStacks(EnumRecipeType type,ItemStack... stacks)
+	{
+		IChemiRecipe recipe = getRecipeFromStacks(type,stacks);
+		return recipe != null ? recipe.getDest() : null;
 	}
 }

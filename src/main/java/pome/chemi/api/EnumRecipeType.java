@@ -3,7 +3,8 @@ package pome.chemi.api;
 public enum EnumRecipeType
 {
 	REACTOR,
-	OXYDIZER,
+	OXIDIZER,
 	ION_EXCHANGER,
-	ABSORBER
+	ABSORBER,
+	E_SEPARATE
 }
