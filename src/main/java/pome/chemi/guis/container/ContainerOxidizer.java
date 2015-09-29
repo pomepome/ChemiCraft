@@ -8,6 +8,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import pome.chemi.guis.slot.SlotCatalyst;
+import pome.chemi.guis.slot.SlotChemical;
 import pome.chemi.guis.slot.SlotResult;
 import pome.chemi.items.ItemChemicals;
 import pome.chemi.tiles.TileEntityOxidizer;
@@ -21,9 +23,12 @@ public class ContainerOxidizer extends Container
 	public ContainerOxidizer(InventoryPlayer p,TileEntityOxidizer tile)
 	{
 		this.tile = tile;
-        this.addSlotToContainer(new Slot(tile, 0, 56, 17));
-        this.addSlotToContainer(new Slot(tile, 1, 56, 53));
-        this.addSlotToContainer(new SlotResult(tile, 2, 116, 35));
+        this.addSlotToContainer(new SlotChemical(tile, 0, 56, 17));
+        this.addSlotToContainer(new SlotCatalyst(tile, 1, 56, 53));
+        this.addSlotToContainer(new SlotResult(tile, 2, 106, 17));
+        this.addSlotToContainer(new SlotResult(tile, 3, 137, 17));
+        this.addSlotToContainer(new SlotResult(tile, 4, 106, 52));
+        this.addSlotToContainer(new SlotResult(tile, 5, 137, 52));
         int i;
 
         for (i = 0; i < 3; ++i)
@@ -50,70 +55,71 @@ public class ContainerOxidizer extends Container
 		super.addCraftingToCrafters(crafting);
 		crafting.sendProgressBarUpdate(this, 0, tile.processTime);
     }
-	public ItemStack transferStackInSlot(EntityPlayer p_82846_1_, int p_82846_2_)
-    {
-        ItemStack itemstack = null;
-        Slot slot = (Slot)this.inventorySlots.get(p_82846_2_);
+	@Override
+	public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex)
+	{
+		Slot slot = this.getSlot(slotIndex);
 
-        if (slot != null && slot.getHasStack())
-        {
-            ItemStack itemstack1 = slot.getStack();
-            itemstack = itemstack1.copy();
+		if (slot == null || !slot.getHasStack())
+		{
+			return null;
+		}
 
-            if (p_82846_2_ == 2)
-            {
-                if (!this.mergeItemStack(itemstack1, 3, 39, true))
-                {
-                    return null;
-                }
+		ItemStack stack = slot.getStack();
+		ItemStack newStack = stack.copy();
 
-                slot.onSlotChange(itemstack1, itemstack);
-            }
-            else if (p_82846_2_ != 1 && p_82846_2_ != 0)
-            {
-                if (itemstack1.getItem() instanceof ItemChemicals)
-                {
-                    if (!this.mergeItemStack(itemstack1, 0, 2, false))
-                    {
-                        return null;
-                    }
-                }
-                else if (p_82846_2_ >= 3 && p_82846_2_ < 30)
-                {
-                    if (!this.mergeItemStack(itemstack1, 30, 39, false))
-                    {
-                        return null;
-                    }
-                }
-                else if (p_82846_2_ >= 30 && p_82846_2_ < 39 && !this.mergeItemStack(itemstack1, 3, 30, false))
-                {
-                    return null;
-                }
-            }
-            else if (!this.mergeItemStack(itemstack1, 3, 39, false))
-            {
-                return null;
-            }
+		if (slotIndex > 5&&slotIndex <= 32)
+		{
+			//player main inventory shift-clicked
+			if(stack.getItem() instanceof ItemChemicals)
+			{
+				if (!this.mergeItemStack(stack, 0,2, false))
+				{
+					return null;
+				}
+			}
+			else
+			{
+				if (!this.mergeItemStack(stack,33,41, false))
+				{
+					return null;
+				}
+			}
+		}
+		else if(slotIndex > 32)
+		{
+			//hotbar shift-clicked
+			if(stack.getItem() instanceof ItemChemicals)
+			{
+				if (!this.mergeItemStack(stack, 0,2, false))
+				{
+					return null;
+				}
+			}
+			else
+			{
+				if (!this.mergeItemStack(stack,6,32, false))
+				{
+					return null;
+				}
+			}
+		}
+		else
+		{
+			if (!this.mergeItemStack(stack,33,this.inventorySlots.size(), false))
+			{
+				return null;
+			}
+		}
+		if (stack.stackSize == 0)
+		{
+			slot.putStack(null);
+		}
 
-            if (itemstack1.stackSize == 0)
-            {
-                slot.putStack((ItemStack)null);
-            }
-            else
-            {
-                slot.onSlotChanged();
-            }
-
-            if (itemstack1.stackSize == itemstack.stackSize)
-            {
-                return null;
-            }
-
-            slot.onPickupFromSlot(p_82846_1_, itemstack1);
-        }
-
-        return itemstack;
-    }
+		else slot.onSlotChanged();
+		slot.onPickupFromSlot(player, stack);
+		return newStack;
+	}
 	public void detectAndSendChanges()
     {
         super.detectAndSendChanges();

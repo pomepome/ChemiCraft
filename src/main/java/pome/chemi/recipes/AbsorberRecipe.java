@@ -3,17 +3,18 @@ package pome.chemi.recipes;
 import net.minecraft.item.ItemStack;
 import pome.chemi.api.EnumRecipeType;
 import pome.chemi.api.IChemiRecipe;
+import pome.chemi.util.Util;
 
 public class AbsorberRecipe implements IChemiRecipe
 {
 	ItemStack solute;
 	ItemStack solvent;
-	ItemStack dest;
-	public AbsorberRecipe(ItemStack psolute,ItemStack psolvent,ItemStack dest)
+	ItemStack[] dest;
+	public AbsorberRecipe(ItemStack psolute,ItemStack psolvent,ItemStack... destination)
 	{
 		solute = psolute;
 		solvent = psolvent;
-		this.dest = dest;
+		this.dest = Util.copyStacks(destination);
 	}
 	@Override
 	public EnumRecipeType getRecipeType()
@@ -28,7 +29,7 @@ public class AbsorberRecipe implements IChemiRecipe
 	}
 
 	@Override
-	public ItemStack getDest()
+	public ItemStack[] getDests()
 	{
 		return dest;
 	}
@@ -37,6 +38,15 @@ public class AbsorberRecipe implements IChemiRecipe
 	public ItemStack[] getSources()
 	{
 		return new ItemStack[]{solute,solvent};
+	}
+	@Override
+	public boolean matches(ItemStack... stacks)
+	{
+		if(stacks.length != 2)
+		{
+			return false;
+		}
+		return Util.rightForRecipe(solute, stacks[0]) && Util.rightForRecipe(solvent, stacks[1]);
 	}
 
 }

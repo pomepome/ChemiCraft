@@ -1,13 +1,18 @@
 package pome.chemi.tiles;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import pome.chemi.api.EnumRecipeType;
+import pome.chemi.api.IChemiRecipe;
+import pome.chemi.items.ItemChemicals;
 import pome.chemi.recipes.RecipesRegistry;
+import pome.chemi.util.Util;
 
 public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 {
@@ -25,13 +30,13 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 		super.readFromNBT(nbt);
 
 		NBTTagList list = nbt.getTagList("Items", 10);
-		inventory = new ItemStack[3];
+		inventory = new ItemStack[getSizeInventory()];
 		for (int i = 0; i < list.tagCount(); i++)
 		{
 			NBTTagCompound subNBT = list.getCompoundTagAt(i);
 			byte slot = subNBT.getByte("Slot");
 
-			if (slot >= 0 && slot < 3)
+			if (slot >= 0 && slot < 6)
 			{
 				inventory[slot] = ItemStack.loadItemStackFromNBT(subNBT);
 			}
@@ -47,7 +52,7 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 		nbt.setInteger("procTime", processTime);
 
 		NBTTagList list = new NBTTagList();
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < getSizeInventory(); i++)
 		{
 			if (inventory[i] == null)
 			{
@@ -65,7 +70,7 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 	@Override
 	public int getSizeInventory()
 	{
-		return 3;
+		return 6;
 	}
 
 	@Override
@@ -110,22 +115,14 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 
 	public boolean canProcess()
 	{
-		ItemStack dest = RecipesRegistry.getDestFromStacks(EnumRecipeType.OXIDIZER, inventory[0], inventory[1]);
-		if(dest != null)
+		IChemiRecipe recipe = RecipesRegistry.getRecipeFromStacks(EnumRecipeType.OXIDIZER, inventory[0], inventory[1]);
+		if(recipe != null)
 		{
-			int i = 0;
-			if(inventory[2] != null)
+			if(recipe.needFire() && worldObj.getBlock(xCoord, yCoord - 1, zCoord) != Blocks.fire)
 			{
-				if(inventory[2].getItem() != dest.getItem())
-				{
-					return false;
-				}
-				i = inventory[2].stackSize;
+				return false;
 			}
-			if(dest.stackSize + i <= 64)
-			{
-				return true;
-			}
+			return Util.pushStacksInInv(this, false, 2,recipe.getDests());
 		}
 		return false;
 	}
@@ -135,19 +132,21 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 		{
 			return;
 		}
-		ItemStack dest = RecipesRegistry.getDestFromStacks(EnumRecipeType.OXIDIZER, inventory[0], inventory[1]);
-		inventory[0].stackSize -= 1;
-		if(inventory[0].stackSize <= 0)
+		IChemiRecipe recipe = RecipesRegistry.getRecipeFromStacks(EnumRecipeType.OXIDIZER, inventory[0], inventory[1]);
+		if(recipe != null)
 		{
-			inventory[0] = null;
-		}
-		if(inventory[2] == null)
-		{
-			inventory[2] = dest.copy();
-		}
-		else
-		{
-			inventory[2].stackSize += dest.stackSize;
+			ItemStack oxidized = recipe.getDests()[0];
+			inventory[0].stackSize -= oxidized.stackSize;
+			if(inventory[0].stackSize <= 0)
+			{
+				inventory[0] = null;
+			}
+			ItemStack[] stackInv = new ItemStack[]{Util.copy(inventory[2]),Util.copy(inventory[3]),Util.copy(inventory[4]),Util.copy(inventory[5])};
+			Util.pushStacksInInv(stackInv, true, recipe.getDests());
+			for(int i = 0;i < stackInv.length;i++)
+			{
+				inventory[i + 2] = Util.copy(stackInv[i]);
+			}
 		}
 		markDirty();
 	}
@@ -169,7 +168,7 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 		if(canProcess())
 		{
 			processTime++;
-			if(processTime == 200)
+			if(processTime == 50)
 			{
 				processTime = 0;
 				process();
@@ -223,26 +222,35 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 	}
 
 	@Override
-	public boolean isItemValidForSlot(int p_94041_1_, ItemStack p_94041_2_)
+	public boolean isItemValidForSlot(int slot, ItemStack stack)
 	{
-		return true;
+		return stack.getItem() instanceof ItemChemicals;
 	}
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side)
 	{
-		return null;
+		ForgeDirection dir = ForgeDirection.getOrientation(side);
+		if(dir == ForgeDirection.UP)
+		{
+			return new int[]{1};
+		}
+		if(dir == ForgeDirection.DOWN)
+		{
+			return new int[]{2,3,4,5};
+		}
+		return new int[]{0};
 	}
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int p_102007_3_)
 	{
-		return false;
+		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override
 	public boolean canExtractItem(int p_102008_1_, ItemStack p_102008_2_, int p_102008_3_) {
-		return false;
+		return true;
 	}
 
 }

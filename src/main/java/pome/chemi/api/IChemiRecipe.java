@@ -6,6 +6,7 @@ public interface IChemiRecipe
 {
 	public EnumRecipeType getRecipeType();
 	public boolean needFire();
-	public ItemStack getDest();
+	public boolean matches(ItemStack... stacks);
+	public ItemStack[] getDests();
 	public ItemStack[] getSources();
 }

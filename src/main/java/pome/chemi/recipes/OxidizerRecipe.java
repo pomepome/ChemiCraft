@@ -3,19 +3,20 @@ package pome.chemi.recipes;
 import net.minecraft.item.ItemStack;
 import pome.chemi.api.EnumRecipeType;
 import pome.chemi.api.IChemiRecipe;
+import pome.chemi.util.Util;
 
 public class OxidizerRecipe implements IChemiRecipe
 {
-	ItemStack oxydized;
+	ItemStack oxidized;
 	ItemStack catalyst;
-	ItemStack dest;
+	ItemStack[] dest;
 	boolean needFire;
-	public OxidizerRecipe(ItemStack toOxydize,ItemStack catalyst,ItemStack destination,boolean needFire)
+	public OxidizerRecipe(ItemStack toOxidize,ItemStack catalyst,boolean needFire,ItemStack... destination)
 	{
-		oxydized = toOxydize;
+		oxidized = toOxidize;
 		this.catalyst = catalyst;
 		this.needFire = needFire;
-		this.dest = destination;
+		this.dest = Util.copyStacks(destination);
 	}
 	@Override
 	public EnumRecipeType getRecipeType() {
@@ -29,13 +30,29 @@ public class OxidizerRecipe implements IChemiRecipe
 	}
 
 	@Override
-	public ItemStack getDest() {
-		return dest.copy();
+	public ItemStack[] getDests() {
+		return dest;
 	}
 
 	@Override
 	public ItemStack[] getSources() {
-		return new ItemStack[]{oxydized,catalyst};
+		return new ItemStack[]{oxidized,catalyst};
+	}
+	@Override
+	public boolean matches(ItemStack... stacks)
+	{
+		if(stacks.length != 2)
+		{
+			return false;
+		}
+		if(catalyst != null)
+		{
+			if(stacks[1] == null || !Util.areStacksEqualRecipe(catalyst, stacks[1]))
+			{
+				return false;
+			}
+		}
+		return Util.areStacksEqual(oxidized, stacks[0]) && stacks[0].stackSize >= oxidized.stackSize;
 	}
 
 }
