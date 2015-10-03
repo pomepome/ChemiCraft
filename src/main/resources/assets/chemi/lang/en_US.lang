@@ -6,6 +6,7 @@ container.oxidizer=Oxidizer
 #Chemical names
 ch.vanadium_pentoxide=Vanadium Pentoxide
 ch.platinum=Plutinum
+ch.sulfur=Sulfur
 ch.sulfur_dioxide=Sulfur Dioxide
 ch.sulfur_trioxide=Sulfur Trioxide
 ch.hydrogen_chloride=Hydrogen Chloride

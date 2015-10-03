@@ -32,7 +32,7 @@ import pome.chemi.recipes.RecipesRegistry;
 import pome.chemi.tiles.TileEntityOxidizer;
 import pome.chemi.util.Util;
 
-@Mod(modid="ChemiCraft",name="ChemiCraft",version="test4")
+@Mod(modid="ChemiCraft",name="ChemiCraft",version="test5")
 public class ChemiCraft implements IChemiCraft
 {
 	@Mod.Instance("ChemiCraft")
@@ -119,7 +119,7 @@ public class ChemiCraft implements IChemiCraft
 		}
 		if(test)
 		{
-			ForgeDirection dir = getRightSide(ForgeDirection.EAST);
+			ForgeDirection dir = getLeftSide(ForgeDirection.EAST);
 			chatToPlayer(p, getSideName(dir));
 			test = false;
 		}

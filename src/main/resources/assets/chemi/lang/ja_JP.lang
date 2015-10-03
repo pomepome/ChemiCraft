@@ -6,6 +6,7 @@ container.oxidizer=酸化器
 #Chemical names
 ch.vanadium_pentoxide=五酸化バナジウム
 ch.platinum=プラチナ
+ch.sulfur=硫黄
 ch.sulfur_dioxide=二酸化硫黄
 ch.sulfur_trioxide=三酸化硫黄
 ch.hydrogen_chloride=塩化水素

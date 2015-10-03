@@ -227,19 +227,26 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 		return stack.getItem() instanceof ItemChemicals;
 	}
 
+	private int getMetadata()
+	{
+		return worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+	}
+
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side)
 	{
 		ForgeDirection dir = ForgeDirection.getOrientation(side);
-		if(dir == ForgeDirection.UP)
+		ForgeDirection dirFront = ForgeDirection.getOrientation(getMetadata());
+		ForgeDirection dirBack = Util.getBackSide(dirFront);
+		if(dir.ordinal() == dirFront.ordinal() || dir == ForgeDirection.UP || dir == ForgeDirection.DOWN)
 		{
-			return new int[]{1};
+			return new int[]{};
 		}
-		if(dir == ForgeDirection.DOWN)
+		if(dir.ordinal() == dirBack.ordinal())
 		{
 			return new int[]{2,3,4,5};
 		}
-		return new int[]{0};
+		return new int[]{0,1};
 	}
 
 	@Override
