@@ -9,11 +9,13 @@ public class AbsorberRecipe implements IChemiRecipe
 {
 	ItemStack solute;
 	ItemStack solvent;
+	boolean causeExplosion;
 	ItemStack[] dest;
-	public AbsorberRecipe(ItemStack psolute,ItemStack psolvent,ItemStack... destination)
+	public AbsorberRecipe(ItemStack psolute,ItemStack psolvent,boolean causeExplosion,ItemStack... destination)
 	{
 		solute = psolute;
 		solvent = psolvent;
+		this.causeExplosion = causeExplosion;
 		this.dest = Util.copyStacks(destination);
 	}
 	@Override
@@ -47,6 +49,11 @@ public class AbsorberRecipe implements IChemiRecipe
 			return false;
 		}
 		return Util.rightForRecipe(solute, stacks[0]) && Util.rightForRecipe(solvent, stacks[1]);
+	}
+	@Override
+	public boolean causeExplosion()
+	{
+		return causeExplosion;
 	}
 
 }

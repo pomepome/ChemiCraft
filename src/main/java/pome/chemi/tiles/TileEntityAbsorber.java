@@ -1,7 +1,6 @@
 package pome.chemi.tiles;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,15 +13,14 @@ import pome.chemi.items.ItemChemicals;
 import pome.chemi.recipes.RecipesRegistry;
 import pome.chemi.util.Util;
 
-public class TileEntityOxidizer extends TileEntity implements ISidedInventory
+public class TileEntityAbsorber extends TileEntity implements ISidedInventory
 {
-	ItemStack[] inventory;
-
+	ItemStack[] inventory = new ItemStack[6];
 	public int processTime;
 
-	public TileEntityOxidizer()
-	{
-		inventory = new ItemStack[getSizeInventory()];
+	@Override
+	public int getSizeInventory() {
+		return 6;
 	}
 	@Override
 	public void readFromNBT(NBTTagCompound nbt)
@@ -67,61 +65,11 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 
 		nbt.setTag("Items", list);
 	}
-	@Override
-	public int getSizeInventory()
-	{
-		return 6;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int slot)
-	{
-		return inventory[slot];
-	}
-
-	@Override
-    public ItemStack decrStackSize(int slot, int amount)
-	{
-		ItemStack stack = inventory[slot];
-		if(stack != null)
-		{
-			if(stack.stackSize <= amount)
-			{
-				inventory[slot] = null;
-			}
-			else
-			{
-				stack = stack.splitStack(amount);
-				if(stack.stackSize == 0)
-				{
-					inventory[slot] = null;
-				}
-			}
-		}
-		return stack;
-    }
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int slot)
-	{
-		if(inventory[slot] != null)
-		{
-			ItemStack is = inventory[slot];
-			inventory[slot] = null;
-			return is;
-		}
-		return null;
-	}
-
 	public boolean canProcess()
 	{
-		IChemiRecipe recipe = RecipesRegistry.getRecipeFromStacks(EnumRecipeType.OXIDIZER, inventory[0], inventory[1]);
+		IChemiRecipe recipe = RecipesRegistry.getRecipeFromStacks(EnumRecipeType.ABSORBER, inventory[0], inventory[1]);
 		if(recipe != null)
 		{
-			if(recipe.needFire() && worldObj.getBlock(xCoord, yCoord - 1, zCoord) != Blocks.fire)
-			{
-				return false;
-			}
 			return Util.pushStacksInInv(this, false, 2,recipe.getDests());
 		}
 		return false;
@@ -132,14 +80,20 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 		{
 			return;
 		}
-		IChemiRecipe recipe = RecipesRegistry.getRecipeFromStacks(EnumRecipeType.OXIDIZER, inventory[0], inventory[1]);
+		IChemiRecipe recipe = RecipesRegistry.getRecipeFromStacks(EnumRecipeType.ABSORBER, inventory[0], inventory[1]);
 		if(recipe != null)
 		{
-			ItemStack oxidized = recipe.getSources()[0];
-			inventory[0].stackSize -= oxidized.stackSize;
+			ItemStack solute = recipe.getSources()[0];
+			inventory[0].stackSize -= solute.stackSize;
 			if(inventory[0].stackSize <= 0)
 			{
 				inventory[0] = null;
+			}
+			ItemStack solvent = recipe.getSources()[1];
+			inventory[1].stackSize -= solvent.stackSize;
+			if(inventory[1].stackSize <= 0)
+			{
+				inventory[1] = null;
 			}
 			ItemStack[] stackInv = Util.copyStacks(inventory[2],inventory[3],inventory[4],inventory[5]);
 			Util.pushStacksInInv(stackInv, true, recipe.getDests());
@@ -147,21 +101,13 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 			{
 				inventory[i + 2] = Util.copy(stackInv[i]);
 			}
+			if(recipe.causeExplosion())
+			{
+				worldObj.createExplosion(null, xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, 0f, true);
+			}
 		}
 		markDirty();
 	}
-
-	@Override
-	public void setInventorySlotContents(int slot, ItemStack stack)
-	{
-		inventory[slot] = stack;
-	}
-
-	private int getWorkTime()
-	{
-		return 5;
-	}
-
 	@Override
 	public void updateEntity()
 	{
@@ -184,7 +130,6 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 			processTime = 0;
 		}
 	}
-
 	public int getProcessPercent()
     {
         return this.processTime * 100 / getWorkTime();
@@ -193,28 +138,86 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
     {
         return this.processTime * size / getWorkTime();
     }
-
-	@Override
-	public String getInventoryName()
+	private int getWorkTime()
 	{
-		return "Oxidizer";
+		return 5;
+	}
+	@Override
+	public ItemStack getStackInSlot(int slot)
+	{
+		return inventory[slot];
 	}
 
 	@Override
-	public boolean hasCustomInventoryName()
+	public ItemStack decrStackSize(int slot, int amount)
 	{
+		ItemStack stack = inventory[slot];
+		if(stack != null)
+		{
+			if(stack.stackSize <= amount)
+			{
+				inventory[slot] = null;
+			}
+			else
+			{
+				stack = stack.splitStack(amount);
+				if(stack.stackSize == 0)
+				{
+					inventory[slot] = null;
+				}
+			}
+		}
+		return stack;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot)
+	{
+		if(inventory[slot] != null)
+		{
+			ItemStack is = inventory[slot];
+			inventory[slot] = null;
+			return is;
+		}
+		return null;
+	}
+
+	private int getMetadata()
+	{
+		return worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+	}
+	private ForgeDirection getOri(int side)
+	{
+		return ForgeDirection.getOrientation(side);
+	}
+	private ForgeDirection getFront()
+	{
+		return getOri(getMetadata());
+	}
+
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack stack)
+	{
+		inventory[slot] = stack;
+	}
+
+	@Override
+	public String getInventoryName() {
+		return "Absorber";
+	}
+
+	@Override
+	public boolean hasCustomInventoryName() {
 		return false;
 	}
 
 	@Override
-	public int getInventoryStackLimit()
-	{
+	public int getInventoryStackLimit() {
 		return 64;
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer p_70300_1_)
-	{
+	public boolean isUseableByPlayer(EntityPlayer p_70300_1_) {
 		return true;
 	}
 
@@ -230,19 +233,6 @@ public class TileEntityOxidizer extends TileEntity implements ISidedInventory
 	public boolean isItemValidForSlot(int slot, ItemStack stack)
 	{
 		return stack.getItem() instanceof ItemChemicals;
-	}
-
-	private int getMetadata()
-	{
-		return worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-	}
-	private ForgeDirection getOri(int side)
-	{
-		return ForgeDirection.getOrientation(side);
-	}
-	private ForgeDirection getFront()
-	{
-		return getOri(getMetadata());
 	}
 
 	@Override

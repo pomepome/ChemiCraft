@@ -2,7 +2,6 @@ package pome.chemi.items;
 
 import java.util.List;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -14,19 +13,17 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import pome.chemi.ChemiCraft;
 import pome.chemi.ChemicalsRegistry;
 import pome.chemi.api.EnumChemicalType;
 import pome.chemi.util.Util;
 
-public class ItemChemicals extends Item
+public class ItemChemicals extends ItemBase
 {
 	IIcon Fluid,Solid,Gas;
 	public ItemChemicals()
 	{
-		super();
-		GameRegistry.registerItem(this,"chemicals");
-		this.setMaxDamage(0).setHasSubtypes(true).setCreativeTab(ChemiCraft.TabChemical).setUnlocalizedName("chemicals");
+		super("chemicals");
+		this.setMaxDamage(0).setHasSubtypes(true);
 	}
 
 	private static EnumChemicalType getType(ItemStack stack)

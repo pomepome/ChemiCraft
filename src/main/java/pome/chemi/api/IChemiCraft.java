@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 public interface IChemiCraft
 {
 	ItemStack getChemicals(int ID);
-	int registerChemicals(String name, String formula, EnumChemicalType type);
+	ItemStack getChemicals(String internalName);
+	int registerChemicals(String display_name, String internal_name, String formula, EnumChemicalType type);
 	void registerChemicalRecipe(IChemiRecipe recipe);
 }

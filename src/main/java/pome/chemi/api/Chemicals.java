@@ -2,12 +2,14 @@ package pome.chemi.api;
 
 public class Chemicals
 {
-	public String name;
+	public String internal_name;
+	public String display_name;
 	public String formula;
 	public EnumChemicalType type;
-	public Chemicals(String chemicalName, String chemicalFormula, EnumChemicalType chemicalType)
+	public Chemicals(String displayName, String internalName, String chemicalFormula, EnumChemicalType chemicalType)
 	{
-		name = chemicalName;
+		display_name = displayName;
+		internal_name = internalName;
 		formula = chemicalFormula;
 		type = chemicalType;
 	}

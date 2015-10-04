@@ -10,9 +10,9 @@ public class ChemicalsRegistry
 {
 	private static List<Chemicals> chemicalsList = new ArrayList<Chemicals>();
 
-	public static int registerChemical(String name, String formula, EnumChemicalType type)
+	public static int registerChemical(String display_name, String internal_name, String formula, EnumChemicalType type)
 	{
-		chemicalsList.add(new Chemicals(name, formula, type));
+		chemicalsList.add(new Chemicals(display_name, internal_name, formula, type));
 		return chemicalsList.size() - 1;
 	}
 
@@ -22,7 +22,7 @@ public class ChemicalsRegistry
 	}
 	public static EnumChemicalType getType(int id)
 	{
-		if(id >= getRegisterdChemicalsCount())
+		if(id >= getRegisterdChemicalsCount() || id < 0)
 		{
 			return null;
 		}
@@ -30,7 +30,7 @@ public class ChemicalsRegistry
 	}
 	public static String getFormula(int id)
 	{
-		if(id >= getRegisterdChemicalsCount())
+		if(id >= getRegisterdChemicalsCount() || id < 0)
 		{
 			return "Unknown chemicals";
 		}
@@ -38,10 +38,23 @@ public class ChemicalsRegistry
 	}
 	public static String getName(int id)
 	{
-		if(id >= getRegisterdChemicalsCount())
+		if(id >= getRegisterdChemicalsCount() || id < 0)
 		{
 			return "Unknown chemicals";
 		}
-		return chemicalsList.get(id).name;
+		return chemicalsList.get(id).display_name;
+	}
+	public static int getChemicalId(String internalName)
+	{
+		int id = -1;
+		for(int i = 0;i < chemicalsList.size();i++)
+		{
+			Chemicals ch = chemicalsList.get(i);
+			if(ch != null && ch.internal_name == internalName)
+			{
+				id = i;
+			}
+		}
+		return id;
 	}
 }

@@ -11,15 +11,14 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import pome.chemi.ChemiCraft;
 import pome.chemi.Constants;
-import pome.chemi.tiles.TileEntityOxidizer;
+import pome.chemi.tiles.TileEntityAbsorber;
 import pome.chemi.util.Util;
 
-public class BlockOxidizer extends BlockWithDirection
+public class BlockAbsorber extends BlockWithDirection
 {
 	IIcon front, input, none, output;
-	public BlockOxidizer()
-	{
-		super("oxidizer");
+	public BlockAbsorber() {
+		super("absorber");
 	}
 
 	@Override
@@ -27,7 +26,7 @@ public class BlockOxidizer extends BlockWithDirection
 	{
 		if(!world.isRemote && !player.isSneaking())
 		{
-			player.openGui(ChemiCraft.instance,Constants.G_OXIDIZER, world, x, y, z);
+			player.openGui(ChemiCraft.instance,Constants.G_ABSORBER, world, x, y, z);
 		}
 		return true;
 	}
@@ -35,7 +34,7 @@ public class BlockOxidizer extends BlockWithDirection
 	@Override
 	public TileEntity createNewTileEntity(World p_149915_1_, int p_149915_2_)
 	{
-		return new TileEntityOxidizer();
+		return new TileEntityAbsorber();
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -65,7 +64,7 @@ public class BlockOxidizer extends BlockWithDirection
     }
 	public void breakBlock(World world, int x, int y, int z, Block block, int meta)
     {
-		TileEntityOxidizer tile = (TileEntityOxidizer)world.getTileEntity(x, y, z);
+		TileEntityAbsorber tile = (TileEntityAbsorber)world.getTileEntity(x, y, z);
 		Util.releaseItems(tile,false);
 		super.breakBlock(world, x, y, z, block, meta);
     }
@@ -82,10 +81,9 @@ public class BlockOxidizer extends BlockWithDirection
 	@SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister reg)
     {
-		front = reg.registerIcon("chemi:oxidizer/oxidizer_front");
+		front = reg.registerIcon("chemi:absorber/absorber_front");
 		input = reg.registerIcon("chemi:common/input");
 		output = reg.registerIcon("chemi:common/output");
 		none = reg.registerIcon("chemi:common/none");
     }
-
 }

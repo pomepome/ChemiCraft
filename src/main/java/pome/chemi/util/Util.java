@@ -4,15 +4,20 @@ import static net.minecraftforge.common.util.ForgeDirection.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class Util
@@ -239,6 +244,61 @@ public class Util
 			return true;
 		}
 	}
+	public static void releaseItems(TileEntity tile,boolean releaseBlock)
+	{
+		if(tile instanceof IInventory)
+		{
+			int x = tile.xCoord;
+			int y = tile.yCoord;
+			int z = tile.zCoord;
+			IInventory inv = (IInventory)tile;
+			for(int i = 0;i < inv.getSizeInventory();i++)
+			{
+				ItemStack stack = inv.getStackInSlot(i);
+				if(stack != null)
+				{
+					spawnEntityItem(tile.getWorldObj(), stack, x + 0.5, y + 0.5, z + 0.5);
+					inv.setInventorySlotContents(i, null);
+				}
+			}
+			inv.markDirty();
+			if(releaseBlock)
+			{
+				spawnEntityItem(tile.getWorldObj(), new ItemStack(tile.blockType), x + 0.5, y + 0.5, z + 0.5);
+			}
+		}
+	}
+	public static void spawnEntityItem(World world, ItemStack stack, double x, double y, double z)
+	{
+    	float jump = ((float) world.rand.nextGaussian() * 0.05F + 0.2F);
+    	spawnEntityItem(world, stack, x, y, z, jump);
+	}
+    public static void spawnEntityItem(World world, ItemStack stack, double x, double y, double z,float jump)
+	{
+    	float f = world.rand.nextFloat() * 0.8F + 0.1F;
+		float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
+		EntityItem entityitem;
+
+		for (float f2 = world.rand.nextFloat() * 0.8F + 0.1F; stack.stackSize > 0; world.spawnEntityInWorld(entityitem))
+		{
+			int j1 = world.rand.nextInt(21) + 10;
+
+			if (j1 > stack.stackSize)
+				j1 = stack.stackSize;
+
+			stack.stackSize -= j1;
+			entityitem = new EntityItem(world, (double)((float) x + f), (double)((float) y + f1), (double)((float) z + f2), new ItemStack(stack.getItem(), j1, stack.getItemDamage()));
+			float f3 = 0.05F;
+			entityitem.motionX = (double)((float) world.rand.nextGaussian() * f3);
+			entityitem.motionY = jump;
+			entityitem.motionZ = (double)((float) world.rand.nextGaussian() * f3);
+
+			if (stack.hasTagCompound())
+			{
+				entityitem.getEntityItem().setTagCompound((NBTTagCompound)stack.getTagCompound().copy());
+			}
+		}
+	}
 	public static ItemStack pushStackInInv(ItemStack[] inventory,ItemStack stack)
 	{
 		for (int i = 0; i < inventory.length; i++)
@@ -269,6 +329,10 @@ public class Util
 		}
 
 		return stack.copy();
+	}
+	public static int getRandomInt(Random rand,int low_limit,int high_limit)
+	{
+		return low_limit + rand.nextInt(high_limit - low_limit + 1);
 	}
 	public static String getSideName(ForgeDirection dir)
 	{

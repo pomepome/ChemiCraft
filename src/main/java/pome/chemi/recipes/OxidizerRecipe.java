@@ -11,12 +11,14 @@ public class OxidizerRecipe implements IChemiRecipe
 	ItemStack catalyst;
 	ItemStack[] dest;
 	boolean needFire;
-	public OxidizerRecipe(ItemStack toOxidize,ItemStack catalyst,boolean needFire,ItemStack... destination)
+	boolean causeExplosion;
+	public OxidizerRecipe(ItemStack toOxidize,ItemStack catalyst,boolean needFire, boolean causeExplosion,ItemStack... destination)
 	{
 		oxidized = toOxidize;
 		this.catalyst = catalyst;
 		this.needFire = needFire;
 		this.dest = Util.copyStacks(destination);
+		this.causeExplosion = causeExplosion;
 	}
 	@Override
 	public EnumRecipeType getRecipeType() {
@@ -53,6 +55,11 @@ public class OxidizerRecipe implements IChemiRecipe
 			}
 		}
 		return Util.areStacksEqual(oxidized, stacks[0]) && stacks[0].stackSize >= oxidized.stackSize;
+	}
+	@Override
+	public boolean causeExplosion()
+	{
+		return causeExplosion;
 	}
 
 }
